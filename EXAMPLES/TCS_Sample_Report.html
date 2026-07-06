@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCS Investment Analysis Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0F172A;
+            --bg-secondary: #1E293B;
+            --bg-tertiary: #334155;
+            --text-primary: #F1F5F9;
+            --text-secondary: #CBD5E1;
+            --border: #475569;
+            
+            --good: #10B981;
+            --good-bg: #065F46;
+            --caution: #F59E0B;
+            --caution-bg: #78350F;
+            --bad: #EF4444;
+            --bad-bg: #7F1D1D;
+            --neutral: #3B82F6;
+            --neutral-bg: #1E3A8A;
+            
+            --accent-purple: #A78BFA;
+            --accent-cyan: #06B6D4;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--neutral-bg));
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            border: 2px solid var(--accent-cyan);
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            color: var(--accent-cyan);
+        }
+
+        .ticker {
+            font-size: 1.4em;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .thesis {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            font-style: italic;
+            border-left: 4px solid var(--accent-cyan);
+            padding-left: 15px;
+            margin-top: 15px;
+        }
+
+        /* Key Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .metric-card {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--neutral);
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metric-card.good { border-left-color: var(--good); }
+        .metric-card.caution { border-left-color: var(--caution); }
+        .metric-card.bad { border-left-color: var(--bad); }
+        .metric-card.neutral { border-left-color: var(--neutral); }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge.good { background: var(--good-bg); color: var(--good); }
+        .badge.caution { background: var(--caution-bg); color: var(--caution); }
+        .badge.bad { background: var(--bad-bg); color: var(--bad); }
+        .badge.neutral { background: var(--neutral-bg); color: var(--neutral); }
+
+        /* Section Styles */
+        section {
+            background: var(--bg-secondary);
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent-purple);
+            color: var(--accent-cyan);
+        }
+
+        h3 {
+            font-size: 1.4em;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            color: var(--accent-purple);
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--accent-cyan);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* ASCII Art Styles */
+        .ascii-box {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 20px 0;
+            color: var(--neutral);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: white;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.good { background: linear-gradient(90deg, var(--good), #059669); }
+        .progress-fill.caution { background: linear-gradient(90deg, var(--caution), #FBBF24); }
+        .progress-fill.bad { background: linear-gradient(90deg, var(--bad), #F87171); }
+        .progress-fill.neutral { background: linear-gradient(90deg, var(--neutral), #60A5FA); }
+
+        /* Score Card */
+        .score-card {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .score-item {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .score-item.good { border-color: var(--good); background: rgba(16, 185, 129, 0.1); }
+        .score-item.caution { border-color: var(--caution); background: rgba(245, 158, 11, 0.1); }
+        .score-item.bad { border-color: var(--bad); background: rgba(239, 68, 68, 0.1); }
+
+        .score-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .score-label {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Recommendation Box */
+        .recommendation {
+            background: linear-gradient(135deg, var(--neutral-bg), var(--bg-tertiary));
+            border: 3px solid var(--neutral);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .recommendation h2 {
+            border: none;
+            color: var(--neutral);
+            margin: 0;
+        }
+
+        .rec-badge {
+            display: inline-block;
+            font-size: 2em;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .rec-badge.buy { background: var(--good-bg); color: var(--good); }
+        .rec-badge.hold { background: var(--caution-bg); color: var(--caution); }
+        .rec-badge.avoid { background: var(--bad-bg); color: var(--bad); }
+
+        .rec-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .rec-detail {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        /* Risk Matrix */
+        .risk-matrix {
+            margin: 20px 0;
+        }
+
+        .risk-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .risk-label {
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+
+        .risk-cell {
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .risk-cell.good { background: var(--good-bg); color: var(--good); }
+        .risk-cell.caution { background: var(--caution-bg); color: var(--caution); }
+        .risk-cell.bad { background: var(--bad-bg); color: var(--bad); }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .checklist li {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            border-left: 4px solid var(--good);
+            padding-left: 15px;
+        }
+
+        .checklist li:before {
+            content: "✓ ";
+            color: var(--good);
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .checklist li.warning {
+            border-left-color: var(--caution);
+        }
+
+        .checklist li.warning:before {
+            content: "⚠ ";
+            color: var(--caution);
+        }
+
+        .checklist li.danger {
+            border-left-color: var(--bad);
+        }
+
+        .checklist li.danger:before {
+            content: "🚨 ";
+            color: var(--bad);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.4em; }
+            .risk-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            section {
+                padding: 20px;
+            }
+        }
+
+        @media print {
+            body { background: white; color: black; }
+            section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>💰 Investment Analysis Report</h1>
+            <div class="ticker">TCS • Tata Consultancy Services Limited</div>
+            <p class="thesis">
+                🎯 "Quality company at a fair price. Exceptional business with durable moat and excellent management.
+                Hold existing positions; buy on dips for margin of safety."
+            </p>
+
+            <div class="metrics-grid">
+                <div class="metric-card good">
+                    <div class="metric-label">Quality Score</div>
+                    <div class="metric-value">8.5<span class="badge good">/10</span></div>
+                </div>
+                <div class="metric-card neutral">
+                    <div class="metric-label">Valuation</div>
+                    <div class="metric-value" style="color: var(--neutral);">Fair</div>
+                </div>
+                <div class="metric-card good">
+                    <div class="metric-label">Risk Level</div>
+                    <div class="metric-value" style="color: var(--good);">Low</div>
+                </div>
+                <div class="metric-card caution">
+                    <div class="metric-label">Recommendation</div>
+                    <div class="metric-value" style="color: var(--caution);">HOLD</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Business Overview -->
+        <section>
+            <h2>🏢 Business Overview</h2>
+            
+            <h3>What They Do</h3>
+            <p>TCS is India's largest IT services company and global leader in digital transformation, providing:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>IT Services & Solutions:</strong> 70% of revenue - Core consulting and software</li>
+                <li><strong>Business Process Services:</strong> 20% of revenue - BPO and outsourcing</li>
+                <li><strong>Engineering Services:</strong> 10% of revenue - R&D and product development</li>
+            </ul>
+
+            <h3>Market Position</h3>
+            <div class="ascii-box">
+Market Leadership Position:
+
+[#1] TCS              ████████████ 31.9 Cr revenue [GREEN]
+     Infosys          ██████████░░ 21.2 Cr revenue [BLUE]
+     Wipro            ████████░░░░ 10.1 Cr revenue [BLUE]
+     HCL Tech         ███████░░░░░ 9.8 Cr revenue  [BLUE]
+
+Global IT Services Market Share:
+Indian IT Services    Global IT Market
+TCS: 5.2%             [World Leader among Indian IT]
+Infosys: 3.8%
+Wipro: 2.1%
+            </div>
+
+            <h3>Competitive Landscape</h3>
+            <table>
+                <tr>
+                    <th>Company</th>
+                    <th>Market Cap</th>
+                    <th>Revenue (Cr)</th>
+                    <th>Net Margin</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td><strong>TCS</strong></td>
+                    <td>₹14.5L Cr</td>
+                    <td>₹31.9 Cr</td>
+                    <td>22.9%</td>
+                    <td><span class="badge good">LEADER</span></td>
+                </tr>
+                <tr>
+                    <td>Infosys</td>
+                    <td>₹8.2L Cr</td>
+                    <td>₹21.2 Cr</td>
+                    <td>20.1%</td>
+                    <td><span class="badge neutral">STRONG</span></td>
+                </tr>
+                <tr>
+                    <td>Wipro</td>
+                    <td>₹4.1L Cr</td>
+                    <td>₹10.1 Cr</td>
+                    <td>16.8%</td>
+                    <td><span class="badge caution">CHALLENGER</span></td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Quality Assessment -->
+        <section>
+            <h2>⭐ Quality Assessment</h2>
+
+            <h3>Overall Quality Score</h3>
+            <div class="score-card">
+                <div class="score-item good">
+                    <div class="score-label">Profitability</div>
+                    <div class="score-number" style="color: var(--good);">9</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill good" style="width: 90%;">9/10</div>
+                    </div>
+                </div>
+                <div class="score-item good">
+                    <div class="score-label">Cash Flow</div>
+                    <div class="score-number" style="color: var(--good);">9</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill good" style="width: 90%;">9/10</div>
+                    </div>
+                </div>
+                <div class="score-item good">
+                    <div class="score-label">Balance Sheet</div>
+                    <div class="score-number" style="color: var(--good);">10</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill good" style="width: 100%;">10/10</div>
+                    </div>
+                </div>
+                <div class="score-item good">
+                    <div class="score-label">Management</div>
+                    <div class="score-number" style="color: var(--good);">9</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill good" style="width: 90%;">9/10</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Master Quality Score</h3>
+            <div style="text-align: center; margin: 25px 0;">
+                <div style="font-size: 3.5em; color: var(--good); font-weight: bold;">8.5 / 10</div>
+                <div style="font-size: 1.2em; color: var(--text-secondary); margin-top: 10px;">
+                    <span class="badge good">HIGH QUALITY</span>
+                </div>
+                <div class="progress-bar" style="margin-top: 15px;">
+                    <div class="progress-fill good" style="width: 85%;">EXCEPTIONAL QUALITY</div>
+                </div>
+            </div>
+
+            <h3>Quality Metrics Breakdown</h3>
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>Score</th>
+                    <th>Assessment</th>
+                    <th>Trend</th>
+                </tr>
+                <tr>
+                    <td>Net Profit Margin</td>
+                    <td>22.9%</td>
+                    <td><span class="badge good">EXCELLENT</span></td>
+                    <td>↔ Stable</td>
+                </tr>
+                <tr>
+                    <td>Return on Equity (ROE)</td>
+                    <td>30.2%</td>
+                    <td><span class="badge good">EXCEPTIONAL</span></td>
+                    <td>↗ Improving</td>
+                </tr>
+                <tr>
+                    <td>Free Cash Flow</td>
+                    <td>₹8,103 Cr</td>
+                    <td><span class="badge good">STRONG</span></td>
+                    <td>↗ Growing</td>
+                </tr>
+                <tr>
+                    <td>Debt/Equity</td>
+                    <td>0.0x</td>
+                    <td><span class="badge good">FORTRESS</span></td>
+                    <td>↔ Zero Debt</td>
+                </tr>
+                <tr>
+                    <td>Revenue CAGR (5Y)</td>
+                    <td>12.5%</td>
+                    <td><span class="badge good">HEALTHY</span></td>
+                    <td>↗ Solid</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Competitive Moat -->
+        <section>
+            <h2>🏰 Competitive Moat Analysis</h2>
+
+            <h3>Moat Types Identified</h3>
+            <div class="ascii-box">
+Moat Strength Evaluation:
+
+1. Switching Costs Moat     ★★★★★ [5/5 - VERY STRONG] [GREEN]
+   Clients depend on TCS for critical systems
+   Cost to switch: 3-6 months work, high risk
+   Integration: Deep within client operations
+
+2. Brand Moat              ★★★★☆ [4/5 - STRONG] [GREEN]
+   Global reputation with Fortune 500 clients
+   25 years of consistent delivery
+   Preferred partner status
+
+3. Scale Moat              ★★★★☆ [4/5 - STRONG] [GREEN]
+   Largest IT services in India
+   Can undertake complex, large projects
+   Better negotiating power
+
+Overall Moat Rating:       ★★★★★ [VERY STRONG]
+Sustainability:            15-20 years [GREEN ✓]
+            </div>
+
+            <h3>Moat Durability Assessment</h3>
+            <div class="score-card">
+                <div class="score-item good">
+                    <div class="score-label">Current Strength</div>
+                    <div class="score-number" style="color: var(--good);">5</div>
+                    <span class="badge good">Very Strong</span>
+                </div>
+                <div class="score-item good">
+                    <div class="score-label">5-Year Outlook</div>
+                    <div class="score-number" style="color: var(--good);">5</div>
+                    <span class="badge good">Protected</span>
+                </div>
+                <div class="score-item good">
+                    <div class="score-label">10-Year Outlook</div>
+                    <div class="score-number" style="color: var(--good);">4</div>
+                    <span class="badge good">Durable</span>
+                </div>
+                <div class="score-item caution">
+                    <div class="score-label">Disruption Risk</div>
+                    <div class="score-number" style="color: var(--caution);">3</div>
+                    <span class="badge caution">Monitor</span>
+                </div>
+            </div>
+
+            <h3>Key Threats & Mitigations</h3>
+            <table>
+                <tr>
+                    <th>Threat</th>
+                    <th>Probability</th>
+                    <th>Impact</th>
+                    <th>Mitigation</th>
+                </tr>
+                <tr>
+                    <td>AI Automation of Services</td>
+                    <td><span class="badge caution">MEDIUM</span></td>
+                    <td><span class="badge bad">HIGH</span></td>
+                    <td>Leading in AI adoption, acquiring startups</td>
+                </tr>
+                <tr>
+                    <td>Rising Wage Inflation</td>
+                    <td><span class="badge caution">MEDIUM</span></td>
+                    <td><span class="badge caution">MEDIUM</span></td>
+                    <td>Expanding delivery centers in Tier-2 cities</td>
+                </tr>
+                <tr>
+                    <td>Nearshoring Trend</td>
+                    <td><span class="badge caution">MEDIUM</span></td>
+                    <td><span class="badge caution">MEDIUM</span></td>
+                    <td>Expanding global footprint (25+ centers)</td>
+                </tr>
+                <tr>
+                    <td>Talent Attrition</td>
+                    <td><span class="badge neutral">LOW</span></td>
+                    <td><span class="badge caution">MEDIUM</span></td>
+                    <td>Strong employer brand, continuous skilling</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Financial Analysis -->
+        <section>
+            <h2>📊 Financial Analysis</h2>
+
+            <h3>Revenue & Profitability Trends (5-Year)</h3>
+            <div class="ascii-box">
+Revenue Growth Trajectory:
+
+₹35 Cr ┤                          
+        ├──────────────────[FY24] 31.9 [GREEN ↗]
+₹30 Cr ┤            28.5 [FY23]
+        ├──────────[FY22] 26.2
+₹25 Cr ┤──────[FY21] 23.2
+        ├──[FY20] 21.5
+₹20 Cr ┤
+        └────────────────────────────
+        FY20  FY21  FY22  FY23  FY24
+
+CAGR: 12.5% [GREEN] ✓ Healthy Growth
+            </div>
+
+            <h3>Key Financial Metrics</h3>
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>FY22</th>
+                    <th>FY23</th>
+                    <th>FY24</th>
+                    <th>Trend</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td><strong>Revenue (Cr)</strong></td>
+                    <td>26,244</td>
+                    <td>28,468</td>
+                    <td>31,883</td>
+                    <td>↗ +12%</td>
+                    <td><span class="badge good">STRONG</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Net Profit (Cr)</strong></td>
+                    <td>6,268</td>
+                    <td>6,763</td>
+                    <td>7,298</td>
+                    <td>↗ +8%</td>
+                    <td><span class="badge good">SOLID</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Net Margin %</strong></td>
+                    <td>23.9%</td>
+                    <td>23.8%</td>
+                    <td>22.9%</td>
+                    <td>↘ -1%</td>
+                    <td><span class="badge caution">WATCH</span></td>
+                </tr>
+                <tr>
+                    <td><strong>ROE %</strong></td>
+                    <td>32.4%</td>
+                    <td>31.8%</td>
+                    <td>30.2%</td>
+                    <td>↘ -2.2%</td>
+                    <td><span class="badge caution">MONITOR</span></td>
+                </tr>
+                <tr>
+                    <td><strong>FCF (Cr)</strong></td>
+                    <td>6,894</td>
+                    <td>7,231</td>
+                    <td>8,103</td>
+                    <td>↗ +12%</td>
+                    <td><span class="badge good">EXCELLENT</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Debt/Equity</strong></td>
+                    <td>0.0x</td>
+                    <td>0.0x</td>
+                    <td>0.0x</td>
+                    <td>↔ Zero</td>
+                    <td><span class="badge good">FORTRESS</span></td>
+                </tr>
+            </table>
+
+            <h3>Health Check Summary</h3>
+            <ul class="checklist">
+                <li>Revenue growing consistently at 12%+ YoY</li>
+                <li>Profitability stable with 22-24% margins</li>
+                <li>FCF > Net Income (quality indicator)</li>
+                <li>Net cash position of ₹5,000+ Cr</li>
+                <li>Zero debt (fortress balance sheet)</li>
+                <li class="warning">Slight margin compression - Monitor quarterly</li>
+                <li class="warning">ROE declining slightly - Watch for stabilization</li>
+            </ul>
+        </section>
+
+        <!-- Valuation -->
+        <section>
+            <h2>💹 Valuation Analysis</h2>
+
+            <h3>DCF Intrinsic Value Estimation</h3>
+            <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <table style="margin: 0;">
+                    <tr>
+                        <td style="width: 40%;"><strong>Base Case Value:</strong></td>
+                        <td style="font-size: 1.8em; color: var(--neutral); font-weight: bold;">₹4,128</td>
+                        <td style="color: var(--text-secondary);">Fair Price</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bull Case Value:</strong></td>
+                        <td style="font-size: 1.8em; color: var(--good); font-weight: bold;">₹4,989</td>
+                        <td style="color: var(--text-secondary);">Optimistic</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bear Case Value:</strong></td>
+                        <td style="font-size: 1.8em; color: var(--bad); font-weight: bold;">₹3,729</td>
+                        <td style="color: var(--text-secondary);">Conservative</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Valuation Range Visualization</h3>
+            <div class="ascii-box">
+Intrinsic Value Range:
+
+    [UNDERVALUED]    [FAIR]      [OVERVALUED]
+         ↓              ↓              ↓
+    ₹3,400      ₹3,729 ──── ₹4,128 ──── ₹4,989      ₹5,200
+    [GREEN]     [RED]   [BLUE]   [YELLOW]    [RED]
+
+Current Market Price: ₹3,850 [BLUE]
+                      ↓
+Position: FAIRLY VALUED (7% upside to fair value)
+Margin of Safety: Only 7% [AMBER - LIMITED]
+
+Valuation Verdict: Fair Price [BLUE]
+            </div>
+
+            <h3>Sensitivity Analysis: Growth Rate vs WACC</h3>
+            <table>
+                <tr>
+                    <th>Growth Rate ↓ / WACC →</th>
+                    <th>8.5% WACC</th>
+                    <th>9.5% WACC</th>
+                    <th>10.5% WACC</th>
+                </tr>
+                <tr>
+                    <td><strong>10% Growth</strong></td>
+                    <td style="background: rgba(16, 185, 129, 0.2); color: var(--good);">₹4,625</td>
+                    <td style="background: rgba(59, 130, 246, 0.2); color: var(--neutral);">₹4,128</td>
+                    <td style="background: rgba(239, 68, 68, 0.2); color: var(--bad);">₹3,729</td>
+                </tr>
+                <tr>
+                    <td><strong>12% Growth (Base)</strong></td>
+                    <td style="background: rgba(16, 185, 129, 0.2); color: var(--good);">₹5,103</td>
+                    <td style="background: rgba(59, 130, 246, 0.2); color: var(--neutral);">₹4,542</td>
+                    <td style="background: rgba(239, 68, 68, 0.2); color: var(--bad);">₹4,061</td>
+                </tr>
+                <tr>
+                    <td><strong>14% Growth</strong></td>
+                    <td style="background: rgba(16, 185, 129, 0.2); color: var(--good);">₹5,621</td>
+                    <td style="background: rgba(59, 130, 246, 0.2); color: var(--neutral);">₹4,989</td>
+                    <td style="background: rgba(239, 68, 68, 0.2); color: var(--bad);">₹4,429</td>
+                </tr>
+            </table>
+
+            <h3>Market Valuation Multiples Comparison</h3>
+            <table>
+                <tr>
+                    <th>Multiple</th>
+                    <th>TCS</th>
+                    <th>Infosys</th>
+                    <th>Wipro</th>
+                    <th>Industry Avg</th>
+                    <th>TCS Status</th>
+                </tr>
+                <tr>
+                    <td><strong>P/E Ratio</strong></td>
+                    <td style="color: var(--neutral); font-weight: bold;">25.2x</td>
+                    <td>26.1x</td>
+                    <td>16.8x</td>
+                    <td>22.7x</td>
+                    <td><span class="badge neutral">FAIR</span></td>
+                </tr>
+                <tr>
+                    <td><strong>P/B Ratio</strong></td>
+                    <td style="color: var(--caution); font-weight: bold;">7.2x</td>
+                    <td>5.8x</td>
+                    <td>4.1x</td>
+                    <td>5.7x</td>
+                    <td><span class="badge caution">PREMIUM</span></td>
+                </tr>
+                <tr>
+                    <td><strong>EV/EBITDA</strong></td>
+                    <td style="color: var(--neutral); font-weight: bold;">22.1x</td>
+                    <td>23.4x</td>
+                    <td>14.2x</td>
+                    <td>19.9x</td>
+                    <td><span class="badge neutral">FAIR</span></td>
+                </tr>
+                <tr>
+                    <td><strong>P/FCF</strong></td>
+                    <td style="color: var(--neutral); font-weight: bold;">41.2x</td>
+                    <td>38.5x</td>
+                    <td>28.9x</td>
+                    <td>36.2x</td>
+                    <td><span class="badge neutral">FAIR</span></td>
+                </tr>
+            </table>
+
+            <h3>Valuation Verdict</h3>
+            <div style="background: var(--neutral-bg); padding: 20px; border-radius: 8px; border-left: 4px solid var(--neutral);">
+                <p><strong>Current Market Price:</strong> ₹3,850/share</p>
+                <p><strong>Intrinsic Value (Base):</strong> ₹4,128/share</p>
+                <p><strong>Upside to Fair Value:</strong> 7.2% <span class="badge neutral">MODEST</span></p>
+                <p style="margin-top: 15px; color: var(--text-secondary);">
+                    <strong>📌 Verdict:</strong> Stock is trading at FAIR VALUATION with limited margin of safety.
+                    Ideal entry point would be below ₹3,500 (which provides 20% margin of safety).
+                </p>
+            </div>
+        </section>
+
+        <!-- Risk Assessment -->
+        <section>
+            <h2>⚠️ Risk Assessment</h2>
+
+            <h3>Risk Matrix: Impact vs Probability</h3>
+            <div class="risk-matrix">
+                <div class="risk-row">
+                    <div class="risk-label">Risk Factor</div>
+                    <div class="risk-label">Impact</div>
+                    <div class="risk-label">Probability</div>
+                    <div class="risk-label">Status</div>
+                </div>
+                <div class="risk-row">
+                    <div>AI Disruption of Services</div>
+                    <div class="risk-cell bad">HIGH</div>
+                    <div class="risk-cell caution">MEDIUM</div>
+                    <div class="risk-cell caution">⚠️ MONITOR</div>
+                </div>
+                <div class="risk-row">
+                    <div>US Recession / Slowdown</div>
+                    <div class="risk-cell bad">HIGH</div>
+                    <div class="risk-cell caution">MEDIUM</div>
+                    <div class="risk-cell caution">⚠️ WATCH</div>
+                </div>
+                <div class="risk-row">
+                    <div>Talent Attrition & Wage Inflation</div>
+                    <div class="risk-cell caution">MEDIUM</div>
+                    <div class="risk-cell caution">MEDIUM</div>
+                    <div class="risk-cell caution">⚠️ MONITOR</div>
+                </div>
+                <div class="risk-row">
+                    <div>Margin Compression</div>
+                    <div class="risk-cell caution">MEDIUM</div>
+                    <div class="risk-cell neutral">LOW</div>
+                    <div class="risk-cell good">✓ OK</div>
+                </div>
+                <div class="risk-row">
+                    <div>Regulatory Changes</div>
+                    <div class="risk-cell neutral">LOW</div>
+                    <div class="risk-cell neutral">LOW</div>
+                    <div class="risk-cell good">✓ OK</div>
+                </div>
+            </div>
+
+            <h3>Overall Risk Rating</h3>
+            <div style="text-align: center; margin: 25px 0;">
+                <div style="font-size: 2em; margin-bottom: 15px;">🟢 LOW RISK</div>
+                <div class="progress-bar" style="max-width: 400px; margin: 20px auto;">
+                    <div class="progress-fill good" style="width: 25%;">LOW</div>
+                </div>
+                <p style="margin-top: 15px; color: var(--text-secondary); font-size: 1.1em;">
+                    <strong>Fortress balance sheet, proven business model, diversified revenue base</strong>
+                </p>
+            </div>
+
+            <h3>Key Risk Mitigations</h3>
+            <ul class="checklist">
+                <li><strong>AI Risk:</strong> TCS is leading in AI adoption and acquiring AI startups</li>
+                <li><strong>Revenue Concentration:</strong> Diversified across 50+ countries and multiple industries</li>
+                <li><strong>Talent Risk:</strong> Expanding delivery centers, strong employer brand</li>
+                <li><strong>Financial Risk:</strong> Zero debt, ₹5,000+ Cr net cash position</li>
+                <li><strong>Management Risk:</strong> Tata Group standards, transparent governance</li>
+            </ul>
+
+            <h3>Deal-Breaker Analysis</h3>
+            <ul class="checklist">
+                <li>❌ <strong>No deal-breakers identified</strong></li>
+                <li style="background: var(--good-bg); border-left-color: var(--good);">✓ Clean regulatory history</li>
+                <li style="background: var(--good-bg); border-left-color: var(--good);">✓ No major litigation pending</li>
+                <li style="background: var(--good-bg); border-left-color: var(--good);">✓ Strong management continuity</li>
+                <li style="background: var(--good-bg); border-left-color: var(--good);">✓ Excellent corporate governance</li>
+            </ul>
+        </section>
+
+        <!-- Investment Decision -->
+        <section class="recommendation">
+            <h2>🎯 Final Investment Decision</h2>
+
+            <h3>Quality Checklist</h3>
+            <table style="margin: 20px 0;">
+                <tr>
+                    <th style="text-align: left; width: 60%;">Munger's Criteria</th>
+                    <th style="width: 40%;">Status</th>
+                </tr>
+                <tr>
+                    <td>✅ Quality business (8+/10)?</td>
+                    <td><span class="badge good">8.5/10 - PASSED</span></td>
+                </tr>
+                <tr>
+                    <td>✅ Strong competitive moat?</td>
+                    <td><span class="badge good">5/5 - PASSED</span></td>
+                </tr>
+                <tr>
+                    <td>✅ Excellent management?</td>
+                    <td><span class="badge good">9/10 - PASSED</span></td>
+                </tr>
+                <tr>
+                    <td>✅ Margin of safety?</td>
+                    <td><span class="badge caution">7% - LIMITED</span></td>
+                </tr>
+                <tr>
+                    <td>✅ Low investment risk?</td>
+                    <td><span class="badge good">LOW - PASSED</span></td>
+                </tr>
+            </table>
+
+            <div class="rec-badge hold">HOLD / BUY ON DIPS</div>
+
+            <div class="rec-details">
+                <div class="rec-detail">
+                    <strong style="color: var(--accent-cyan);">Current Price</strong>
+                    <p style="font-size: 1.5em; color: var(--caution); margin-top: 5px;">₹3,850</p>
+                </div>
+                <div class="rec-detail">
+                    <strong style="color: var(--accent-cyan);">Fair Value</strong>
+                    <p style="font-size: 1.5em; color: var(--neutral); margin-top: 5px;">₹4,128</p>
+                </div>
+                <div class="rec-detail">
+                    <strong style="color: var(--accent-cyan);">Upside</strong>
+                    <p style="font-size: 1.5em; color: var(--neutral); margin-top: 5px;">+7%</p>
+                </div>
+                <div class="rec-detail">
+                    <strong style="color: var(--accent-cyan);">Buy Target</strong>
+                    <p style="font-size: 1.5em; color: var(--good); margin-top: 5px;">₹3,500</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px; color: var(--accent-cyan); border: none;">Investment Thesis</h3>
+            <p style="font-size: 1.1em; line-height: 1.8;">
+                TCS is a <strong>wonderful company trading at a fair price</strong>. With an exceptional quality score of 8.5/10,
+                a very strong competitive moat, and excellent management, it meets Munger's criteria for quality businesses worth owning.
+                However, at current valuations with only 7% upside, there's <strong>limited margin of safety</strong>.
+            </p>
+
+            <h3 style="color: var(--accent-cyan); border: none;">Action Plan</h3>
+            <ul class="checklist" style="margin-top: 15px;">
+                <li><strong>Current Shareholders:</strong> HOLD with conviction. This is quality worth owning.</li>
+                <li><strong>Looking to Buy:</strong> Wait for ₹3,500 or below (provides 20% margin of safety)</li>
+                <li><strong>Target Price (3Y):</strong> ₹4,500-5,000 (provides exit opportunity at 10%+ returns)</li>
+                <li><strong>Stop Loss:</strong> Below ₹3,200 (signals thesis breakdown)</li>
+            </ul>
+        </section>
+
+        <!-- Monitoring Dashboard -->
+        <section>
+            <h2>📈 Quarterly Monitoring Dashboard</h2>
+
+            <h3>Key Metrics to Track</h3>
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>Watch Level</th>
+                    <th>Alert Level</th>
+                    <th>Red Flag</th>
+                </tr>
+                <tr>
+                    <td><strong>Revenue Growth</strong></td>
+                    <td><span class="badge good">10%+ YoY</span></td>
+                    <td><span class="badge caution">5-10% YoY</span></td>
+                    <td><span class="badge bad">&lt;5% YoY</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Net Margin</strong></td>
+                    <td><span class="badge good">22-24%</span></td>
+                    <td><span class="badge caution">20-22%</span></td>
+                    <td><span class="badge bad">&lt;20%</span></td>
+                </tr>
+                <tr>
+                    <td><strong>FCF vs Net Income</strong></td>
+                    <td><span class="badge good">FCF &gt; NI</span></td>
+                    <td><span class="badge caution">FCF ≈ NI</span></td>
+                    <td><span class="badge bad">FCF &lt; NI</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Client Concentration</strong></td>
+                    <td><span class="badge good">Top 10 &lt;30%</span></td>
+                    <td><span class="badge caution">Top 10 = 30-35%</span></td>
+                    <td><span class="badge bad">Top 10 &gt;35%</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Attrition Rate</strong></td>
+                    <td><span class="badge good">&lt;15%</span></td>
+                    <td><span class="badge caution">15-20%</span></td>
+                    <td><span class="badge bad">&gt;20%</span></td>
+                </tr>
+            </table>
+
+            <h3>Red Flags - Would Trigger SELL</h3>
+            <ul class="checklist">
+                <li class="danger">Margins compress below 20% for 2+ consecutive quarters</li>
+                <li class="danger">FCF turns negative or significantly below Net Income</li>
+                <li class="danger">Major client defection (loss of 5%+ revenue)</li>
+                <li class="danger">Significant regulatory investigation or fines</li>
+                <li class="danger">Key management departures without succession plan</li>
+                <li class="danger">Major accounting restatement or audit qualification</li>
+            </ul>
+
+            <h3>Review Schedule</h3>
+            <ul class="checklist">
+                <li>📅 <strong>Quarterly:</strong> Review after earnings; compare vs guidance</li>
+                <li>📅 <strong>Semi-Annual:</strong> Update price targets and valuation</li>
+                <li>📅 <strong>Annual:</strong> Full re-analysis and thesis validation</li>
+                <li>📅 <strong>Ad-hoc:</strong> On major market events or news</li>
+            </ul>
+        </section>
+
+        <!-- Data Sources -->
+        <section>
+            <h2>📚 Analysis Data Sources</h2>
+
+            <h3>Documents Reviewed</h3>
+            <ul style="margin-left: 20px;">
+                <li>TCS Annual Report FY2024 (Audited financials)</li>
+                <li>Quarterly Results Q4 FY2024 (Latest earnings)</li>
+                <li>Management Investor Presentations (Strategy & guidance)</li>
+                <li>Industry Reports (NASSCOM, Goldman Sachs, Morgan Stanley)</li>
+                <li>NSE/BSE Official Filings</li>
+                <li>Competitor Analysis (Infosys, Wipro, HCL)</li>
+            </ul>
+
+            <h3>Analysis Date & Validity</h3>
+            <p>
+                <strong>Analysis Date:</strong> July 6, 2026<br>
+                <strong>Last Updated:</strong> Q4 FY2024 Results<br>
+                <strong>Validity Period:</strong> Valid until next quarterly earnings or major news
+            </p>
+
+            <h3>Disclaimer</h3>
+            <p style="background: var(--bad-bg); padding: 15px; border-radius: 8px; border-left: 4px solid var(--bad);">
+                ⚠️ <strong>Important:</strong> This analysis is for educational and research purposes only.
+                It is NOT investment advice. Always conduct your own due diligence before making investment decisions.
+                Past performance does not guarantee future results. Consult a financial advisor before investing.
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>Generated by Bharat Equity Research AI | Charlie Munger Value Investing Framework</p>
+            <p>© 2026 All Rights Reserved | For Educational Purposes Only</p>
+        </footer>
+    </div>
+</body>
+</html>
